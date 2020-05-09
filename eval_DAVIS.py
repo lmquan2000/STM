@@ -58,9 +58,6 @@ if VIZ:
     print('--- Produce mask overaid video outputs. Evaluation will run slow.')
     print('--- Require FFMPEG for encoding, Check folder ./viz')
 
-
-palette = Image.open(DATA_ROOT + '/Annotations/480p/blackswan/00000.png').getpalette()
-
 def Run_video(Fs, Ms, num_frames, num_objects, Mem_every=None, Mem_number=None):
     # initialize storage tensors
     if Mem_every:
@@ -114,6 +111,13 @@ code_name = '{}_DAVIS_{}{}'.format(MODEL,YEAR,SET)
 print('Start Testing:', code_name)
 
 
+
+from pathlib import Path
+palette = None 
+for seq_name in Path(DATA_ROOT + '/Annotations/480p/').iterdir():
+    palette = Image.open(str(seq_name) + '00000.png').getpalette()
+    break
+
 for seq, V in enumerate(Testloader):
     Fs, Ms, num_objects, info = V
     seq_name = info['name'][0]
@@ -126,19 +130,21 @@ for seq, V in enumerate(Testloader):
     test_path = os.path.join('./test', code_name, seq_name)
     if not os.path.exists(test_path):
         os.makedirs(test_path)
+    print('Saving mask...')
     for f in range(num_frames):
         img_E = Image.fromarray(pred[f])
         img_E.putpalette(palette)
         img_E.save(os.path.join(test_path, '{:05d}.png'.format(f)))
 
     if VIZ:
+        print('Saving video...')
         from helpers import overlay_davis
         # visualize results #######################
         viz_path = os.path.join('./viz/', code_name, seq_name)
         if not os.path.exists(viz_path):
             os.makedirs(viz_path)
 
-        for f in range(num_frames):
+        for f in tqdm.tqdm(range(num_frames)):
             pF = (Fs[0,:,f].permute(1,2,0).numpy() * 255.).astype(np.uint8)
             pE = pred[f]
             canvas = overlay_davis(pF, pE, palette)
