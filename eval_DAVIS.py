@@ -115,7 +115,7 @@ print('Start Testing:', code_name)
 from pathlib import Path
 palette = None 
 for seq_name in Path(DATA_ROOT + '/Annotations/480p/').iterdir():
-    palette = Image.open(str(seq_name) + '00000.png').getpalette()
+    palette = Image.open(str(seq_name) + '/00000.png').getpalette()
     break
 
 for seq, V in enumerate(Testloader):
@@ -152,7 +152,7 @@ for seq, V in enumerate(Testloader):
             canvas.save(os.path.join(viz_path, 'f{}.jpg'.format(f)))
 
         vid_path = os.path.join('./viz/', code_name, '{}.mp4'.format(seq_name))
-        frame_path = os.path.join('./viz/', code_name, seq_name, 'f%d.jpg')
+        frame_path = os.path.join('./viz/', code_name, seq_name, '%05d.jpg')
         os.system('ffmpeg -framerate 10 -i {} {} -vcodec libx264 -crf 10  -pix_fmt yuv420p  -nostats -loglevel 0 -y'.format(frame_path, vid_path))
 
 
