@@ -5,7 +5,7 @@ import os
 
 def split_instance(images_dir, masks_dir, imset, dest_dir, year = 2017, type = 'train'):
     try:
-        os.makedirs(os.path.join(dest_dir, 'ImageSets'))
+        os.makedirs(os.path.join(dest_dir, 'ImageSets', year))
     except:
         pass
     print('Generating seperate mask..')
@@ -14,7 +14,7 @@ def split_instance(images_dir, masks_dir, imset, dest_dir, year = 2017, type = '
         palette = Image.open(seq_name / '00000.png').getpalette()
         break
     with open(imset, "r") as lines:
-        f = open(os.path.join(dest_dir,'ImageSets/' + type + '.txt'), 'w')
+        f = open(os.path.join(dest_dir,'ImageSets/', year,type + '.txt'), 'w')
         for line in lines:
             seq_name = line.rstrip('\n')
             print(seq_name)

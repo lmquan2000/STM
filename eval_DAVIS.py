@@ -131,7 +131,16 @@ for seq, V in enumerate(Testloader):
     if not os.path.exists(test_path):
         os.makedirs(test_path)
     print('Saving mask...')
+
+    # If is instance object -> change color from id 1 -> exactly id.
+    try:
+        id = int(seq_name.split('_')[1]) 
+        pred *= id
+    except:
+        pass
+
     for f in range(num_frames):
+        
         img_E = Image.fromarray(pred[f])
         img_E.putpalette(palette)
         img_E.save(os.path.join(test_path, '{:05d}.png'.format(f)))
@@ -149,10 +158,10 @@ for seq, V in enumerate(Testloader):
             pE = pred[f]
             canvas = overlay_davis(pF, pE, palette)
             canvas = Image.fromarray(canvas)
-            canvas.save(os.path.join(viz_path, 'f{}.jpg'.format(f)))
+            canvas.save(os.path.join(viz_path, 'f{:05d}.jpg'.format(f)))
 
         vid_path = os.path.join('./viz/', code_name, '{}.mp4'.format(seq_name))
-        frame_path = os.path.join('./viz/', code_name, seq_name, '%05d.jpg')
+        frame_path = os.path.join('./viz/', code_name, seq_name, 'f%05d.jpg')
         os.system('ffmpeg -framerate 10 -i {} {} -vcodec libx264 -crf 10  -pix_fmt yuv420p  -nostats -loglevel 0 -y'.format(frame_path, vid_path))
 
 
