@@ -43,7 +43,6 @@ def split_instance(images_dir, masks_dir, imset, dest_dir, year = '2017', type =
                       
                 except:
                     mask = None
-                continue
                 im = Image.open(img_ids[i])
                 # extract certain classes from mask (e.g. cars)
                 for v in class_values:
